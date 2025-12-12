@@ -190,7 +190,7 @@ public class Main : LlmTranslatePluginBase
             if ((firstCandidate?["finishReason"]?.ToString() ?? "") == "STOP" && contentValue.EndsWith('\n'))
                 contentValue = contentValue.TrimEnd('\n');
 
-            result.Text = contentValue;
+            result.Text += contentValue;
         }, cancellationToken: cancellationToken);
     }
 }
