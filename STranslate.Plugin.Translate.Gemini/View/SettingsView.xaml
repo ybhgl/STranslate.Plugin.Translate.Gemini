@@ -147,17 +147,6 @@
             </ikw:SimpleStackPanel>
         </ui:SettingsCard>
 
-
-        <!--  连接验证  -->
-        <ui:SettingsCard Description="{DynamicResource PluginTranslateValidateDescription}" Header="{DynamicResource PluginTranslateValidate}">
-                    TickPlacement="Both"
-                    Value="{Binding Temperature}" />
-
-                <TextBlock VerticalAlignment="Center" Text="{Binding ElementName=PART_TempSlider, Path=Value, StringFormat=F1}" />
-            </ikw:SimpleStackPanel>
-        </ui:SettingsCard>
-
-
         <!--  连接验证  -->
         <ui:SettingsCard Description="{DynamicResource PluginTranslateValidateDescription}" Header="{DynamicResource PluginTranslateValidate}">
             <ui:SettingsCard.HeaderIcon>
