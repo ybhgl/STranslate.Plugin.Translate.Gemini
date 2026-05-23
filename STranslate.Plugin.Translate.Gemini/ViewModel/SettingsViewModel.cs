@@ -26,6 +26,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         Models = new ObservableCollection<string>(_settings.Models);
         Temperature = _settings.Temperature;
         ThinkingBudget = _settings.ThinkingBudget;
+        _thinkingBudgetIndex = Array.IndexOf(_thinkingBudgets, ThinkingBudget);
+        if (_thinkingBudgetIndex == -1) _thinkingBudgetIndex = 0;
 
         PropertyChanged += OnPropertyChanged;
         Models.CollectionChanged += OnModelsCollectionChanged;
@@ -60,7 +62,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 _settings.Temperature = Math.Round(Temperature, 1);
                 break;
             case nameof(ThinkingBudget):
-                _settings.ThinkingBudget = Math.Round(ThinkingBudget, 1);
+                _settings.ThinkingBudget = Math.Round(ThinkingBudget, 0);
+                break;
+
+            case nameof(ThinkingBudgetIndex):
+                ThinkingBudget = _thinkingBudgets[ThinkingBudgetIndex];
                 break;
 
             default:
@@ -76,6 +82,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial ObservableCollection<string> Models { get; set; }
     [ObservableProperty] public partial double Temperature { get; set; }
     [ObservableProperty] public partial double ThinkingBudget { get; set; }
+    [ObservableProperty] private int _thinkingBudgetIndex;
+    private readonly double[] _thinkingBudgets = [-1, 0, 1024, 5000, 10000, 20000];
 
     [RelayCommand]
     private void AddModel(string model)
@@ -151,12 +159,16 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             // 温度限定
             var temperature = Math.Clamp(_settings.Temperature, 0, 2);
 
-            var thinkingBudget = Math.Clamp(_settings.ThinkingBudget, -1, 24576);
+            var thinkingBudget = (int)Math.Clamp(_settings.ThinkingBudget, -1, 24576);
 
             var content = new
             {
                 contents = messages.Select(e => new { role = e.Role, parts = new[] { new { text = e.Content } } }),
-                generationConfig = new object[] { temperature, new { thinkingConfig = new { thinkingBudget } } },
+                generationConfig = new
+                {
+                    temperature,
+                    thinkingConfig = new { thinkingBudget }
+                },
                 safetySettings = new[]
                 {
                     new { category = "HARM_CATEGORY_HARASSMENT", threshold = "BLOCK_NONE"},         //骚扰内容。
